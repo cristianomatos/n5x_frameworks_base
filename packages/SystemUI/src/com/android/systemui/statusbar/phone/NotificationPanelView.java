@@ -17,6 +17,7 @@
 package com.android.systemui.statusbar.phone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -30,6 +31,8 @@ import android.view.accessibility.AccessibilityEvent;
 
 import com.android.systemui.EventLogTags;
 import com.android.systemui.R;
+import com.android.systemui.settings.BrightnessController;
+import com.android.systemui.settings.ToggleSlider;
 import com.android.systemui.statusbar.GestureRecorder;
 
 public class NotificationPanelView extends PanelView {
@@ -44,7 +47,6 @@ public class NotificationPanelView extends PanelView {
     Drawable mHandleBar;
     int mHandleBarHeight;
     View mHandleView;
-    int mFingers;
     PhoneStatusBar mStatusBar;
     boolean mOkToFlip;
 
@@ -67,7 +69,7 @@ public class NotificationPanelView extends PanelView {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        Resources resources = getContext().getResources();
+        Resources resources = mContext.getResources();
         mHandleBar = resources.getDrawable(R.drawable.status_bar_close);
         mHandleBarHeight = resources.getDimensionPixelSize(R.dimen.close_handle_height);
         mHandleView = findViewById(R.id.handle);
@@ -75,11 +77,13 @@ public class NotificationPanelView extends PanelView {
 
     @Override
     public void fling(float vel, boolean always) {
-        GestureRecorder gr = ((PhoneStatusBarView) mBar).mBar.getGestureRecorder();
-        if (gr != null) {
-            gr.tag(
-                "fling " + ((vel > 0) ? "open" : "closed"),
-                "notifications,v=" + vel);
+        if (DEBUG_GESTURES) {
+            GestureRecorder gr = ((PhoneStatusBarView) mBar).mBar.getGestureRecorder();
+            if (gr != null) {
+                gr.tag(
+                    "fling " + ((vel > 0) ? "open" : "closed"),
+                    "notifications,v=" + vel);
+            }
         }
         super.fling(vel, always);
     }
@@ -88,7 +92,7 @@ public class NotificationPanelView extends PanelView {
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             event.getText()
-                    .add(getContext().getString(R.string.accessibility_desc_notification_shade));
+                    .add(mContext.getString(R.string.accessibility_desc_notification_shade));
             return true;
         }
 
@@ -109,7 +113,7 @@ public class NotificationPanelView extends PanelView {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        final int off = (int) (getHeight() - mHandleBarHeight - getPaddingBottom());
+        final int off = (getHeight() - mHandleBarHeight - getPaddingBottom());
         canvas.translate(0, off);
         mHandleBar.setState(mHandleView.getDrawableState());
         mHandleBar.draw(canvas);
@@ -138,10 +142,10 @@ public class NotificationPanelView extends PanelView {
                         mGestureStartY > getHeight() - mHandleBarHeight - getPaddingBottom();
                     mOkToFlip = getExpandedHeight() == 0;
                     int quickPulldownMode = Settings.System.getIntForUser(
-                            getContext().getContentResolver(), Settings.System.QS_QUICK_PULLDOWN,
+                            mContext.getContentResolver(), Settings.System.QS_QUICK_PULLDOWN,
                             0, UserHandle.USER_CURRENT);
                     int smartPulldownMode = Settings.System.getIntForUser(
-                            getContext().getContentResolver(), Settings.System.QS_SMART_PULLDOWN,
+                            mContext.getContentResolver(), Settings.System.QS_SMART_PULLDOWN,
                             0, UserHandle.USER_CURRENT);
                     if (smartPulldownMode == 1 && !mStatusBar.hasClearableNotifications()) {
                         flip = true;
