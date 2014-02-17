@@ -2606,6 +2606,18 @@ public final class Settings {
                 "window_orientation_listener_log";
 
         /**
+         * Enable blocking wakelock
+         * @hide
+         */
+        public static final String WAKELOCK_BLOCKING_ENABLED = "wakelock_blocking_enabled";
+
+        /**
+         * List of wakelock blocks selected
+         * @hide
+         */
+        public static final String WAKELOCK_BLOCKING_LIST = "wakelock_blocking_list";
+
+        /**
          * @deprecated Use {@link android.provider.Settings.Global#POWER_SOUNDS_ENABLED}
          * instead
          * @hide
