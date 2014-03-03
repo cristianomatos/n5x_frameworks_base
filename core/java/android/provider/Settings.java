@@ -6253,6 +6253,13 @@ public final class Settings {
         public static final String WAKE_WHEN_PLUGGED_OR_UNPLUGGED = "wake_when_plugged_or_unplugged";
 
         /**
+         * Whether to wake the display when plugging or unplugging the charger
+         *
+         * @hide
+         */
+        public static final String DOUBLE_TAP_WAKE_GESTURE = "double_tap_wake_gesture";
+
+        /**
          * Whether ADB is enabled.
          */
         public static final String ADB_ENABLED = "adb_enabled";
@@ -7431,6 +7438,7 @@ public final class Settings {
             BUGREPORT_IN_POWER_MENU,
             STAY_ON_WHILE_PLUGGED_IN,
             WAKE_WHEN_PLUGGED_OR_UNPLUGGED,
+            DOUBLE_TAP_WAKE_GESTURE,
             AUTO_TIME,
             AUTO_TIME_ZONE,
             POWER_SOUNDS_ENABLED,
