@@ -14,6 +14,9 @@
     <string name="halo_tutorial2">Move me: 2x-tap &amp; drag</string>
     <string name="halo_tutorial3">Browse tasks: Horizontal drag</string>
 
+    <!-- Active Display -->
+    <string name="active_display_privacy_content">Content message not showing because privacy mode enabled</string>
+
     <string name="status_bar_notification_hide_icon_packages">Hide status bar app\'s notification icon(s)</string>
 
     <!-- Dialog Cancel/OK -->
