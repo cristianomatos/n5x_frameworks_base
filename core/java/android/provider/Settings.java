@@ -3142,6 +3142,13 @@ public final class Settings {
         public static final String NAV_BUTTONS = "nav_buttons";
 
         /**
+         * Custom Recent Control
+         *
+         * @hide
+         */
+        public static final String CUSTOM_RECENT = "custom_recent";
+
+        /**
          * Whether navigation bar is placed on the left side in landscape mode
          *
          * @hide
