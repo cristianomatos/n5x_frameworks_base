@@ -20,4 +20,6 @@
 
     <color name="ad_notification_background_color">#3fff</color>
 
+    <drawable name="reminder_bg_pressed">#FF191919</drawable>
+
 </resources>

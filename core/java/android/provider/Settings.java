@@ -3014,6 +3014,12 @@ public final class Settings {
         public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
 
         /**
+         * Reminder alert flip interval
+         * @hide
+         */
+        public static final String REMINDER_ALERT_INTERVAL = "reminder_alert_interval";
+
+        /**
          * Quick Settings Collapse Pane
          *
          * @hide
