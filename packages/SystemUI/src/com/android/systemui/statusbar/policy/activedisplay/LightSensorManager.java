@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Nexus 5 Experience Project
+ * Copyright (C) 2011 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+
+import javax.annotation.concurrent.GuardedBy;
 
 /**
  * Manages the light sensor and notifies a listener when enabled.
@@ -71,12 +73,12 @@ public class LightSensorManager {
          * <p>
          * Before registering and after unregistering we are always in the {@link State#DARKER} state.
          */
-        private State mLastState;
+        @GuardedBy("this") private State mLastState;
         /**
          * If this flag is set to true, we are waiting to reach the {@link State#DARKER} state and
          * should notify the listener and unregister when that happens.
          */
-        private boolean mWaitingForDarkerState;
+        @GuardedBy("this") private boolean mWaitingForDarkerState;
 
         public LightSensorEventListener(SensorManager sensorManager, Sensor lightSensor,
                 LightListener listener) {
@@ -167,6 +169,7 @@ public class LightSensorManager {
             }
         }
 
+        @GuardedBy("this")
         private void unregisterWithoutNotification() {
             mSensorManager.unregisterListener(this);
             mWaitingForDarkerState = false;
