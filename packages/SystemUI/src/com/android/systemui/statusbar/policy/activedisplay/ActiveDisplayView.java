@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2013 The ChameleonOS Project
- * This code has been modified. Portions copyright (C) 2013, Nexus 5 Experience Project.
+ * Copyright (C) 2012-2014 Nexus 5 Experience OpenSource Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.systemui.statusbar.policy.activedisplay;
 
 import android.animation.ObjectAnimator;
@@ -72,8 +72,8 @@ import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
-import com.android.internal.util.n5x.DeviceUtils;
-import com.android.internal.util.n5x.QuietHoursHelper;
+import com.android.internal.util.cm.QSUtils;
+import com.android.internal.util.cm.QuietHoursUtils;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.internal.widget.multiwaveview.GlowPadView;
 import com.android.internal.widget.multiwaveview.GlowPadView.OnTriggerListener;
@@ -212,7 +212,6 @@ public class ActiveDisplayView extends FrameLayout
     private boolean mTurnOffModeEnabled = false;
     private boolean mUseActiveDisplayContent = false;
     private boolean mBypassActiveDisplay = false;
-    private boolean mBatteryLockscreen = false;
     private boolean mShowNotificationCount = false;
     private boolean mEnableDoubleTap = false;
     private int mPocketMode = POCKET_MODE_OFF;
@@ -355,8 +354,6 @@ public class ActiveDisplayView extends FrameLayout
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.ACTIVE_DISPLAY_BYPASS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.BATTERY_AROUND_LOCKSCREEN_RING), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NOTIF_COUNT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.ACTIVE_DISPLAY_ANNOYING), false, this);
@@ -423,9 +420,6 @@ public class ActiveDisplayView extends FrameLayout
                     UserHandle.USER_CURRENT_OR_SELF) != 0;
             mBypassActiveDisplay = Settings.System.getIntForUser(
                     resolver, Settings.System.ACTIVE_DISPLAY_BYPASS, 1,
-                    UserHandle.USER_CURRENT_OR_SELF) != 0;
-            mBatteryLockscreen = Settings.System.getIntForUser(
-                    resolver, Settings.System.BATTERY_AROUND_LOCKSCREEN_RING, 0,
                     UserHandle.USER_CURRENT_OR_SELF) != 0;
             mShowNotificationCount = Settings.System.getIntForUser(
                     resolver, Settings.System.STATUS_BAR_NOTIF_COUNT, 0,
@@ -984,8 +978,8 @@ public class ActiveDisplayView extends FrameLayout
     }
 
     private boolean inQuietHours() {
-        boolean isQuietHourDim = QuietHoursHelper.inQuietHours(mContext, Settings.System.QUIET_HOURS_DIM);
-        boolean isQuietHourMute = QuietHoursHelper.inQuietHours(mContext, Settings.System.QUIET_HOURS_MUTE);
+        boolean isQuietHourDim = QuietHoursUtils.inQuietHours(mContext, Settings.System.QUIET_HOURS_DIM);
+        boolean isQuietHourMute = QuietHoursUtils.inQuietHours(mContext, Settings.System.QUIET_HOURS_MUTE);
         return isQuietHourDim || isQuietHourMute;
     }
 
@@ -1161,7 +1155,7 @@ public class ActiveDisplayView extends FrameLayout
     }
 
     private void registerNotificationListener() {
-        ComponentName cn = new ComponentName(mContext, getClass().getName());
+        ComponentName cn = new ComponentName("ActiveDisplayComponent", getClass().getName());
         try {
             mNM.registerListener(mNotificationListener, cn, UserHandle.USER_ALL);
         } catch (RemoteException e) {
@@ -1435,11 +1429,11 @@ public class ActiveDisplayView extends FrameLayout
     }
 
     private boolean hasProximitySensor() {
-        return DeviceUtils.deviceSupportsProximitySensor(mContext);
+        return QSUtils.deviceSupportsProximitySensor(mContext);
     }
 
     private boolean hasLightSensor() {
-        return DeviceUtils.deviceSupportsLightSensor(mContext);
+        return QSUtils.deviceSupportsLightSensor(mContext);
     }
 
     /**
@@ -1629,11 +1623,7 @@ public class ActiveDisplayView extends FrameLayout
             if (action.equals(Intent.ACTION_BATTERY_CHANGED)) {
                 final int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                 if (mGlowPadView != null) {
-                    if (mBatteryLockscreen) {
-                        mGlowPadView.setArc(level * 3.6f, Color.WHITE);
-                    } else {
-                        mGlowPadView.setArc(0, 0);
-                    }
+                    mGlowPadView.setArc(0, 0);
                 }
             } else if (action.equals(ACTION_REDISPLAY_NOTIFICATION)) {
                 final int sequence = intent.getIntExtra("disp", 0);
