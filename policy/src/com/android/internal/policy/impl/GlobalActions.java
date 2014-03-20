@@ -74,6 +74,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.internal.app.ThemeUtils;
+import com.android.internal.util.nameless.NamelessActions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -400,6 +401,34 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         if (showExpandedDesktop) {
             mItems.add(mExpandDesktopModeOn);
+        }
+
+        // next: On-The-Go, if enabled
+        boolean showOnTheGo = Settings.System.getBoolean(mContext.getContentResolver(),
+                Settings.System.POWER_MENU_ONTHEGO_ENABLED, false);
+        if (showOnTheGo) {
+            mItems.add(
+                new SinglePressAction(com.android.internal.R.drawable.ic_lock_onthego,
+                        R.string.global_action_onthego) {
+
+                        public void onPress() {
+                            NamelessActions.processAction(mContext,
+                                    NamelessActions.ACTION_ONTHEGO_TOGGLE);
+                        }
+
+                        public boolean onLongPress() {
+                            return false;
+                        }
+
+                        public boolean showDuringKeyguard() {
+                            return true;
+                        }
+
+                        public boolean showBeforeProvisioning() {
+                            return true;
+                        }
+                    }
+            );
         }
 
         // next: airplane mode
