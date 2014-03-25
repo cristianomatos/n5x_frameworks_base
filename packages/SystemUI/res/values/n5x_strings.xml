@@ -16,6 +16,12 @@
 
     <string name="status_bar_notification_hide_icon_packages">Hide status bar app\'s notification icon(s)</string>
 
+    <!-- Dialog Cancel/OK -->
+    <string name="cancel">Cancel</string>
+    <string name="dlg_ok">Ok</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
     <string name="quick_settings_reminder">Reminder</string>
     <string name="quick_settings_reminder_title">Title:</string>
     <string name="quick_settings_reminder_message">Message:</string>
