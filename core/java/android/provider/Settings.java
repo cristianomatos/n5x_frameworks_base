@@ -3490,6 +3490,18 @@ public final class Settings {
         public static final String QUIET_HOURS_DIM = "quiet_hours_dim";
 
         /**
+         * show carrier in statusbar. The value is
+         * boolean (1 or 0).
+         */
+        public static final String STATUS_BAR_CARRIER = "status_bar_carrier";
+
+        /**
+         * custom carrier label. The value is
+         * String.
+         */
+        public static final String CUSTOM_CARRIER_LABEL = "custom_carrier_label";
+
+        /**
          * show clear all recents button
          *  @hide
          */

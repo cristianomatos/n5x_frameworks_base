@@ -297,6 +297,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private boolean mShowCarrierInPanel = false;
 
+    // Status bar carrier
+    private boolean mShowStatusBarCarrier;
+
     private SignalClusterView mSignalClusterView;
     private MSimSignalClusterView mMSimSignalClusterView;
     private SignalClusterTextView mSignalTextView;
@@ -425,6 +428,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.REMINDER_ALERT_INTERVAL), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_CARRIER), false, this);
             updateSettings();
         }
 
@@ -1903,6 +1908,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if ((diff & StatusBarManager.DISABLE_CLOCK) != 0) {
             boolean show = (state & StatusBarManager.DISABLE_CLOCK) == 0;
             showClock(show);
+            //add CarrierLabel
+            showStatusBarCarrierLabel(show);
         }
         if ((diff & StatusBarManager.DISABLE_EXPAND) != 0) {
             if ((state & StatusBarManager.DISABLE_EXPAND) != 0) {
@@ -3462,6 +3469,19 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         } else {
             mSignalClusterView.setStyle(signalStyle);
             mSignalTextView.setStyle(signalStyle);
+        }
+
+        mShowStatusBarCarrier = Settings.System.getInt(
+                resolver, Settings.System.STATUS_BAR_CARRIER, 0) == 1;
+        showStatusBarCarrierLabel(mShowStatusBarCarrier);
+    }
+
+    public void showStatusBarCarrierLabel(boolean show) {
+        if (mStatusBarView == null) return;
+        ContentResolver resolver = mContext.getContentResolver();
+        View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
+        if (statusBarCarrierLabel != null) {
+            statusBarCarrierLabel.setVisibility(show ? (mShowStatusBarCarrier ? View.VISIBLE : View.GONE) : View.GONE);
         }
 
         mFlipInterval = Settings.System.getIntForUser(mContext.getContentResolver(),
