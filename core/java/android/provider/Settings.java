@@ -5138,6 +5138,12 @@ public final class Settings {
         public static final String LOCK_SCREEN_OWNER_INFO_ENABLED =
             "lock_screen_owner_info_enabled";
 
+       /**
+         * This preference enables showing the power menu on LockScreen.
+         * @hide
+         */
+        public static final String LOCK_SCREEN_POWER_MENU = "lock_screen_power_menu";
+
         /**
          * Whether the unsecure widget screen will be shown before a secure
          * lock screen
