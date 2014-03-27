@@ -3490,6 +3490,12 @@ public final class Settings {
         public static final String QUIET_HOURS_DIM = "quiet_hours_dim";
 
         /**
+         * show traffic in statusbar. The value is
+         * int (0: Hide  or 1: Only Rx 2: Rx&Tx).
+         */
+        public static final String STATUS_BAR_TRAFFIC_STYLE = "status_bar_traffic_style";
+
+        /**
          * show carrier in statusbar. The value is
          * boolean (1 or 0).
          */
