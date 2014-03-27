@@ -32,11 +32,15 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.ContentResolver;
 import android.database.ContentObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -68,6 +72,11 @@ import android.widget.FrameLayout;
 
 import com.android.internal.util.cm.TorchConstants;
 
+import com.android.internal.policy.IKeyguardShowCallback;
+import com.android.internal.widget.LockPatternUtils;
+
+import java.io.File;
+
 /**
  * Manages creating, showing, hiding and resetting the keyguard.  Calls back
  * via {@link KeyguardViewMediator.ViewMediatorCallback} to poke
@@ -97,12 +106,19 @@ public class KeyguardViewManager {
 
     private boolean mScreenOn = false;
     private LockPatternUtils mLockPatternUtils;
+    private AudioManager mAudioManager;
+
+    private int mBackgroundStyle;
+    private int mBackgroundColor;
 
     private boolean mUnlockKeyDown = false;
 
     private NotificationHostView mNotificationView;
     private NotificationViewManager mNotificationViewManager;
     private boolean mLockscreenNotifications = true;
+
+    private static final String WALLPAPER_IMAGE_PATH =
+            "/data/data/com.android.settings/files/lockscreen_wallpaper";
 
     // Lockscreen blur
     private Bitmap mBlurredImage = null;
@@ -129,6 +145,10 @@ public class KeyguardViewManager {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_NOTIFICATIONS), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_BACKGROUND_STYLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.LOCKSCREEN_BACKGROUND_COLOR), false, this);
         }
 
         @Override
@@ -146,6 +166,11 @@ public class KeyguardViewManager {
             mNotificationViewManager.unregisterListeners();
             mNotificationViewManager = null;
         }
+
+        mBackgroundStyle = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_BACKGROUND_STYLE, 2);
+        mBackgroundColor = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_BACKGROUND_COLOR, 0x00000000);
     }
 
     /**
@@ -161,6 +186,7 @@ public class KeyguardViewManager {
         mViewManager = viewManager;
         mViewMediatorCallback = callback;
         mLockPatternUtils = lockPatternUtils;
+        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         SettingsObserver observer = new SettingsObserver(new Handler());
         observer.observe();
@@ -293,6 +319,30 @@ public class KeyguardViewManager {
         }
 
         public void setCustomBackground(Drawable d) {
+            if (!mAudioManager.isMusicActive()) {
+                switch (mBackgroundStyle) {
+                    case 0:
+                        d = new ColorDrawable(mBackgroundColor);
+                        d.setColorFilter(BACKGROUND_COLOR, PorterDuff.Mode.SRC_OVER);
+                        mCustomBackground = d;
+                        break;
+                    case 1:
+                        try {
+                            String wallpaper = WALLPAPER_IMAGE_PATH;
+                            Bitmap bitmap = BitmapFactory.decodeFile(wallpaper);
+                            d = new BitmapDrawable(mContext.getResources(), bitmap);
+                            mCustomBackground = d;
+                        } catch (Exception e) {
+                        }
+                        break;
+                    case 2:
+                    default:
+                        mCustomBackground = d;
+                }
+                computeCustomBackgroundBounds(mCustomBackground);
+                setBackground(mBackgroundDrawable);
+            }
+
             if (!ActivityManager.isHighEndGfx() || !mScreenOn) {
                 mCustomBackground = d;
                 if (d != null) {
