@@ -31,4 +31,8 @@
   <java-symbol type="integer" name="config_networkSpeedIndicatorSingleLineFontSize" />
   <java-symbol type="integer" name="config_networkSpeedIndicatorDualLineFontSize" />
 
+  <!-- Screen Recorder -->
+  <java-symbol type="string" name="global_action_screen_record" />
+  <java-symbol type="drawable" name="ic_lock_screen_record" />
+
 </resources>
