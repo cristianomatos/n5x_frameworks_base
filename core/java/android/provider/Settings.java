@@ -3966,6 +3966,12 @@ public final class Settings {
          */
         public static final String LOCKSCREEN_BACKGROUND_COLOR = "lockscreen_background_color";
 
+        /**
+         * Whether to hide the frame behind lockscreen widgets
+         * @hide
+         */
+        public static final String LOCKSCREEN_WIDGET_FRAME_ENABLED = "lockscreen_widget_frame_enabled";
+
        /**
          * HALO enabled, should default to 0 (HALO is disabled)
          * @hide
