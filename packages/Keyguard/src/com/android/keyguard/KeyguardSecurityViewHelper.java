@@ -19,7 +19,12 @@ package com.android.keyguard;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.ContentResolver;
 import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.view.View;
 
 /**
