@@ -183,7 +183,11 @@ public class PowerSaverService extends Service  {
 
     private void updatePowerSaveProfile(boolean enabled) {
         String [] pwrsvValue = getResources().getStringArray(com.android.internal.R.array.perf_profile_values);
+        if (Settings.System.getIntForUser(mContext.getContentResolver(), Settings.System.POWER_SAVER_CPU_PROFILE, 1, UserHandle.USER_CURRENT_OR_SELF) != 0) {
         Settings.System.putStringForUser(mContentResolver, Settings.System.PERFORMANCE_PROFILE, enabled ? pwrsvValue[0] : pwrsvValue[1], UserHandle.USER_CURRENT_OR_SELF);
+        } else {
+        Settings.System.putStringForUser(mContentResolver, Settings.System.PERFORMANCE_PROFILE, enabled ? pwrsvValue[1] : pwrsvValue[1], UserHandle.USER_CURRENT_OR_SELF);
+	}
     }
 
     private void updateEnabledToggles() {
