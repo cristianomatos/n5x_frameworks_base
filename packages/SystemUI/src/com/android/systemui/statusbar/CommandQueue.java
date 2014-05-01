@@ -94,6 +94,7 @@ public class CommandQueue extends IStatusBar.Stub {
         public void setImeWindowStatus(IBinder token, int vis, int backDisposition);
         public void setHardKeyboardStatus(boolean available, boolean enabled);
         public void toggleRecentApps();
+        public void clearRecentApps();
         public void preloadRecentApps();
         public void showSearchPanel();
         public void hideSearchPanel();
