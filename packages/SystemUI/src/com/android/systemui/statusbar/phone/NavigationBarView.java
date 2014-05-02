@@ -628,8 +628,10 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
 
+        final String keyguardPackage = mContext.getString(
+                com.android.internal.R.string.config_keyguardPackage);
         final Bundle keyguard_metadata = NavigationBarView
-                .getApplicationMetadata(mContext, "com.android.keyguard");
+                .getApplicationMetadata(mContext, keyguardPackage);
         if (null != keyguard_metadata &&
                 keyguard_metadata.getBoolean("com.cyanogenmod.keyguard", false)) {
             mObserver.observe();
