@@ -59,4 +59,7 @@
     <string name="power_saver_notification_ticker">Power Saver is running</string>
     <string name="power_saver_notification_text">We are working to optimize battery life</string>
 
+    <!-- Title shown in notification popup for launching notification in floating mode -->
+    <string name="status_bar_notification_floating_item_title">Floating mode</string>
+
 </resources>
