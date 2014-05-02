@@ -74,9 +74,11 @@ public class NotificationPeek implements SensorActivityHandler.SensorChangedCall
 
     private static final float ICON_LOW_OPACITY = 0.3f;
     private static final int NOTIFICATION_PEEK_TIME = 5000; // 5 secs
-    private static final int PARTIAL_WAKELOCK_TIME = 10000; // 10 secs
+    //private static final int PARTIAL_WAKELOCK_TIME = 10000; // 10 secs
     private static final long SCREEN_ON_START_DELAY = 300; // 300 ms
     private static final long REMOVE_VIEW_DELAY = 300; // 300 ms
+
+    private int mPeekPartialWakelockTime;
 
     private BaseStatusBar mStatusBar;
 
@@ -380,7 +382,10 @@ public class NotificationPeek implements SensorActivityHandler.SensorChangedCall
                 }
 
                 mWakeLockHandler.removeCallbacks(mPartialWakeLockRunnable);
-                mWakeLockHandler.postDelayed(mPartialWakeLockRunnable, PARTIAL_WAKELOCK_TIME);
+                //mWakeLockHandler.postDelayed(mPartialWakeLockRunnable, PARTIAL_WAKELOCK_TIME);
+                mPeekPartialWakelockTime = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.PEEK_PARTIAL_WAKELOCK_TIME, 0, UserHandle.USER_CURRENT);
+                mWakeLockHandler.postDelayed(mPartialWakeLockRunnable, mPeekPartialWakelockTime);
 
                 mNextNotification = n;
                 return;

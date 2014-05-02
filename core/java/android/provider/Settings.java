@@ -2104,6 +2104,12 @@ public final class Settings {
         public static final String PEEK_STATE = "peek_state";
 
         /**
+         * Set the timeout of peek when pikcing up the device
+         * @hide
+         */
+        public static final String PEEK_PARTIAL_WAKELOCK_TIME = "peek_partial_wakelock_time";
+
+        /**
          * Master volume (float in the range 0.0f to 1.0f).
          * @hide
          */
