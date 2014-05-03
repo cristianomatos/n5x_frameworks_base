@@ -3622,6 +3622,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     }
 
     private void setPieTriggerMask(boolean isPortrait) {
+        ContentResolver resolver = mContext.getContentResolver();
         int newMask = EdgeGesturePosition.LEFT.FLAG;
         int mNavButtonsHeight = Settings.System.getIntForUser(resolver,
                 Settings.System.NAVIGATION_BAR_HEIGHT, 48, UserHandle.USER_CURRENT);
