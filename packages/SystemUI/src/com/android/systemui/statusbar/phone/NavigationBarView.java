@@ -462,6 +462,7 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
         setDisabledFlags(mDisabledFlags, true);
     }
 
+    @Override
     public void setNavigationIconHints(int hints) {
         setNavigationIconHints(NavigationCallback.NAVBAR_BACK_HINT, hints, false);
     }
@@ -509,6 +510,7 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
         return mNavigationIconHints;
     }
 
+    @Override
     public void setDisabledFlags(int disabledFlags) {
         setDisabledFlags(disabledFlags, false);
     }
@@ -603,6 +605,7 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
         }
     }
 
+    @Override
     public void setMenuVisibility(final boolean show) {
         setMenuVisibility(show, false);
     }
