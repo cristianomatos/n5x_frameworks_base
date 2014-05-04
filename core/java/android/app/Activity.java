@@ -4232,6 +4232,11 @@ public class Activity extends ContextThemeWrapper
         }
     }
 
+    /**
+     * Hide from public api
+     * @hide
+     */
+
     public void finishFloating() {
         mMainThread.performFinishFloating();
     }
@@ -5260,14 +5265,12 @@ public class Activity extends ContextThemeWrapper
             mWindow.setCloseOnTouchOutsideIfNotSet(true);
             mWindow.setGravity(Gravity.CENTER);
 
-            if (android.os.Process.myUid() == android.os.Process.SYSTEM_UID) {
-                mWindow.setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,
-                        WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                WindowManager.LayoutParams params = mWindow.getAttributes();
-                params.alpha = 1f;
-                params.dimAmount = 0.25f;
-                mWindow.setAttributes((android.view.WindowManager.LayoutParams) params);
-            }
+            mWindow.setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND,
+                    WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            WindowManager.LayoutParams params = mWindow.getAttributes();
+            params.alpha = 1f;
+            params.dimAmount = 0.5f;
+            mWindow.setAttributes((WindowManager.LayoutParams) params);
 
             // Scale it
             scaleFloatingWindow(context);
