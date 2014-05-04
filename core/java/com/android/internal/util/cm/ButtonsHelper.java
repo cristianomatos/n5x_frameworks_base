@@ -93,9 +93,6 @@ public class ButtonsHelper {
                     context.getContentResolver(),
                     Settings.System.PIE_BUTTONS_CONFIG_SECOND_LAYER,
                     UserHandle.USER_CURRENT);
-        if (config == null) {
-            config = NavigationRingConstants.PIE_SECOND_LAYER_CONFIG_DEFAULT;
-        }
         return config;
     }
 
