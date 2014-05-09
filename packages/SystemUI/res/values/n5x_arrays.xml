@@ -20,9 +20,10 @@
     </array>
 
     <string-array name="recommend_governors" translatable="false">
-        <item>conservative</item>
+        <!-- <item>conservative</item> -->
         <item>wheatley</item>
-        <item>hotplug</item>
+        <item>intellidemand</item>
+        <!-- <item>hotplug</item> -->
         <item>ondemand</item>
         <item>interactive</item>
     </string-array>
