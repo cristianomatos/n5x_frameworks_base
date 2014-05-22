@@ -391,7 +391,7 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
                 mWakeLockHandler.removeCallbacks(mPartialWakeLockRunnable);
                 //mWakeLockHandler.postDelayed(mPartialWakeLockRunnable, PARTIAL_WAKELOCK_TIME);
                 mPeekPartialWakelockTime = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.PEEK_PARTIAL_WAKELOCK_TIME, 0, UserHandle.USER_CURRENT);
+                        Settings.System.PEEK_PARTIAL_WAKELOCK_TIME, 10000, UserHandle.USER_CURRENT);
                 mWakeLockHandler.postDelayed(mPartialWakeLockRunnable, mPeekPartialWakelockTime);
 
                 mNextNotification = n;
@@ -672,5 +672,20 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
             mHandler.removeCallbacksAndMessages(null);
             dismissNotification();
         }
+    }
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.System.PEEK_PARTIAL_WAKELOCK_TIME), false, this,
+                    UserHandle.USER_ALL);
+        }
+
+        @Override public void onChange(boolean selfChange) {}
     }
 }
