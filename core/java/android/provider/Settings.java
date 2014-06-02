@@ -2117,6 +2117,12 @@ public final class Settings {
         public static final String PEEK_PARTIAL_WAKELOCK_TIME = "peek_partial_wakelock_time";
 
         /**
+         * Time to show the new notification on peek
+         * @hide
+         */
+        public static final String NOTIFICATION_PEEK_TIME = "notification_peek_time";
+
+        /**
          * Master volume (float in the range 0.0f to 1.0f).
          * @hide
          */
