@@ -73,12 +73,13 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
     private static final String PEEK_APPLICATION = "com.jedga.peek";
 
     private static final float ICON_LOW_OPACITY = 0.3f;
-    private static final int NOTIFICATION_PEEK_TIME = 5000; // 5 secs
+    //private static final int NOTIFICATION_PEEK_TIME = 5000; // 5 secs
     //private static final int PARTIAL_WAKELOCK_TIME = 10000; // 10 secs
     private static final long SCREEN_ON_START_DELAY = 300; // 300 ms
     private static final long REMOVE_VIEW_DELAY = 300; // 300 ms
 
     private int mPeekPartialWakelockTime;
+    private int mNotificationPeekTime;
 
     private BaseStatusBar mStatusBar;
 
@@ -337,6 +338,9 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
 
     private void scheduleTasks() {
         mHandler.removeCallbacksAndMessages(null);
+
+        mNotificationPeekTime = Settings.System.getIntForUser(mContext.getContentResolver(),
+                        Settings.System.NOTIFICATION_PEEK_TIME, 5000, UserHandle.USER_CURRENT);
 
         // turn on screen task
         mHandler.postDelayed(new Runnable() {
@@ -709,6 +713,9 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
             ContentResolver resolver = mContext.getContentResolver();
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.System.PEEK_PARTIAL_WAKELOCK_TIME), false, this,
+                    UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.System.NOTIFICATION_PEEK_TIME), false, this,
                     UserHandle.USER_ALL);
         }
 
