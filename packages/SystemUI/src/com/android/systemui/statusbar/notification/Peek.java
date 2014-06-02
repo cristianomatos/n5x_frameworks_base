@@ -360,7 +360,7 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
                     mPowerManager.goToSleep(SystemClock.uptimeMillis());
                 }
 		    }
-	    }, SCREEN_ON_START_DELAY + NOTIFICATION_PEEK_TIME);
+	    }, SCREEN_ON_START_DELAY + mNotificationPeekTime);
 
         // remove view task (make sure screen is off by delaying a bit)
         mHandler.postDelayed(new Runnable() {
@@ -368,7 +368,7 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
 		    public void run() {
                 dismissNotification();
 		    }
-	    }, SCREEN_ON_START_DELAY + (NOTIFICATION_PEEK_TIME * (long) 1.3));
+	    }, SCREEN_ON_START_DELAY + (mNotificationPeekTime * (long) 1.3));
     }
 
     public void showNotification(StatusBarNotification n, boolean update) {
