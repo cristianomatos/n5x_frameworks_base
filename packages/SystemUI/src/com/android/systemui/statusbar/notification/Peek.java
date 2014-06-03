@@ -340,7 +340,7 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
         mHandler.removeCallbacksAndMessages(null);
 
         mNotificationPeekTime = Settings.System.getIntForUser(mContext.getContentResolver(),
-                        Settings.System.NOTIFICATION_PEEK_TIME, 5000, UserHandle.USER_CURRENT);
+                        Settings.System.PEEK_NOTIFICATION_TIME, 5000, UserHandle.USER_CURRENT);
 
         // turn on screen task
         mHandler.postDelayed(new Runnable() {
@@ -715,7 +715,7 @@ public class Peek implements SensorActivityHandler.SensorChangedCallback {
                     Settings.System.PEEK_PARTIAL_WAKELOCK_TIME), false, this,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.Secure.getUriFor(
-                    Settings.System.NOTIFICATION_PEEK_TIME), false, this,
+                    Settings.System.PEEK_NOTIFICATION_TIME), false, this,
                     UserHandle.USER_ALL);
         }
 

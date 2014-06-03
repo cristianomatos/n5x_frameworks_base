@@ -2120,7 +2120,7 @@ public final class Settings {
          * Time to show the new notification on peek
          * @hide
          */
-        public static final String NOTIFICATION_PEEK_TIME = "notification_peek_time";
+        public static final String PEEK_NOTIFICATION_TIME = "peek_notification_time";
 
         /**
          * Master volume (float in the range 0.0f to 1.0f).
