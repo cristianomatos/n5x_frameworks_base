@@ -3452,13 +3452,6 @@ public final class Settings {
         public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
 
         /**
-         * Whether or not to use a center clock in phone status bar
-         *
-         * @hide
-         */
-        public static final String STATUS_BAR_CENTER_CLOCK = "status_bar_center_clock";
-
-	/**
          * Display style of the status bar battery information
          * 0: Display the battery an icon in portrait mode
          * 2: Display the battery as a circle
