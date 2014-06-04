@@ -887,8 +887,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
             mStatusBarWindow = (StatusBarWindowView) View.inflate(context,
-                    mUseCenterClock ? R.layout.msim_super_status_bar_center_clock : R.layout.msim_super_status_bar,
-                    null);
+                    R.layout.msim_super_status_bar, null);
         } else {
             mStatusBarWindow = (StatusBarWindowView) View.inflate(context,
                     mUseCenterClock ? R.layout.super_status_bar_center_clock : R.layout.super_status_bar,
