@@ -2130,6 +2130,14 @@ public final class Settings {
          */
         public static final String HOVER_STATE = "hover_state";
 
+         /**
+         * In call dialpad state.
+         * 0 = hidden
+         * 1 = showing
+         * @hide
+         */
+        public static final String DIALPAD_STATE = "dialpad_state";
+
         /**
          * Master volume (float in the range 0.0f to 1.0f).
          * @hide
