@@ -56,6 +56,9 @@ public class RecentsVerticalScrollView extends ScrollView
     private Runnable mOnScrollListener;
     private Handler mHandler;
 
+    // control clear all animation overload on quick double tap
+    private boolean mAnimationDone = true;
+
     public RecentsVerticalScrollView(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
         float densityScale = getResources().getDisplayMetrics().density;
@@ -216,9 +219,15 @@ public class RecentsVerticalScrollView extends ScrollView
                         // one. This will probably never happen
                     }
                 }
+                // we're done dismissing childs here, reset
+                mAnimationDone = true;
             }
         });
-        clearAll.start();
+
+        if (mAnimationDone) {
+            mAnimationDone = false;
+            clearAll.start();
+        }
     }
 
     public boolean onInterceptTouchEvent(MotionEvent ev) {
