@@ -1595,9 +1595,8 @@ public abstract class BaseStatusBar extends SystemUI implements
         } else {
             // screen on - check if hover is enabled
             if (mNotificationHelper.isHoverEnabled()) {
-                mHover.setNotification(entry, true);
+                mHover.setNotification(entry, false);
             } else {
-                // We pass this to hover here only if it doesn't show
                 mHover.addStatusBarNotification(entry.notification);
             }
             mPeek.addNotification(entry.notification);
@@ -1708,8 +1707,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         boolean updateTicker = (notification.getNotification().tickerText != null
                 && !TextUtils.equals(notification.getNotification().tickerText,
-                        oldEntry.notification.getNotification().tickerText)) || mHaloActive &&
-                        (mHoverState == HOVER_DISABLED);;
+                        oldEntry.notification.getNotification().tickerText)) &&
+                        (mHoverState == HOVER_DISABLED) || mHaloActive;
         boolean isTopAnyway = isTopNotification(rowParent, oldEntry);
         if (contentsUnchanged && bigContentsUnchanged && (orderUnchanged || isTopAnyway)) {
             if (DEBUG) Log.d(TAG, "reusing notification for key: " + key);
@@ -1822,6 +1821,7 @@ public abstract class BaseStatusBar extends SystemUI implements
             if (mNotificationHelper.isHoverEnabled()) {
                 mHover.setNotification(entry, true);
             } else {
+                // We pass this to hover here only if it doesn't show
                 mHover.addStatusBarNotification(entry.notification);
             }
             mPeek.addNotification(entry.notification);
