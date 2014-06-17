@@ -703,26 +703,26 @@ public abstract class BaseStatusBar extends SystemUI implements
         mHover.setHoverActive(mHoverState == HOVER_ENABLED);
     }*/
 
-    protected void updateHoverButton(boolean shouldBeVisible) {
+    /*protected void updateHoverButton(boolean shouldBeVisible) {
         mHoverButton.setVisibility((shouldBeVisible && !mHoverHideButton) ? View.VISIBLE : View.GONE);
     }
 
     protected void updateHoverButton() {
         updateHoverButton(true);
-    }
+    }*/
   
     public void updateHoverActive() {
         mHoverActive = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.HOVER_ACTIVE, 0) == 1;
 
         mHoverHideButton = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.HOVER_HIDE_BUTTON, 0) == 1;
+                Settings.System.HOVER_HIDE_BUTTON, 1) == 1;
 
-        updateHoverButton();
+        /*updateHoverButton();
         if (!mHoverHideButton) {
             mHoverButton.setImageResource(mHoverActive ?
                     R.drawable.ic_notify_hover_pressed : R.drawable.ic_notify_hover_normal);
-        }
+        }*/
   
         mHover.setHoverActive(mHoverActive);
       }
