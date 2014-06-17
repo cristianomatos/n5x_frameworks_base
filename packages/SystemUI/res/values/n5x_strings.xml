@@ -72,4 +72,8 @@
 
     <!-- Title shown when app provides no interface -->
     <string name="status_bar_floating_no_interface">App provides no interface</string>
+
+    <!-- HOVER Tile-->
+    <string name="quick_settings_hover">HOVER</string>
+    <string name="quick_settings_hover_off">HOVER OFF</string>
 </resources>
