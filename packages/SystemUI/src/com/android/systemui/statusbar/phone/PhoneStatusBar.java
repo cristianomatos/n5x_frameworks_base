@@ -3553,8 +3553,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
                 }
             }
-            /*Settings.System.putInt(mContext.getContentResolver(),
-                    Settings.System.HOVER_STATE,
+            Settings.System.putInt(mContext.getContentResolver(),
+                    /*Settings.System.HOVER_STATE,
                             mHoverState != HOVER_DISABLED ? HOVER_DISABLED : HOVER_ENABLED);
             updateHoverState();*/
                     Settings.System.HOVER_ACTIVE, mHoverActive ? 0 : 1);
