@@ -164,8 +164,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     private static final int COLLAPSE_AFTER_DISMISS_DELAY = 200;
     private static final int COLLAPSE_AFTER_REMOVE_DELAY = 400;
 
-    public static final int HOVER_DISABLED = 0;
-    public static final int HOVER_ENABLED = 1;
+    //public static final int HOVER_DISABLED = 0;
+    //public static final int HOVER_ENABLED = 1;
 
     protected CommandQueue mCommandQueue;
     protected INotificationManager mNotificationManager;
@@ -257,7 +257,10 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     // Hover
     protected Hover mHover;
-    protected int mHoverState;
+    //protected int mHoverState;
+    //HOVER TWEAKS
+    protected boolean mHoverEnabled;
+    protected boolean mHoverActive;
     protected ImageView mHoverButton;
     protected HoverCling mHoverCling;
 
@@ -536,16 +539,30 @@ public abstract class BaseStatusBar extends SystemUI implements
         SettingsObserver settingsObserver = new SettingsObserver(new Handler());
         settingsObserver.observe();
 
+        // Listen for HOVER enabled
         mContext.getContentResolver().registerContentObserver(
-                Settings.System.getUriFor(Settings.System.HOVER_STATE),
+                Settings.System.getUriFor(Settings.System.HOVER_ENABLED),
                         false, new ContentObserver(new Handler()) {
             @Override
             public void onChange(boolean selfChange) {
-                updateHoverState();
+                updateHoverActive();
             }
         });
 
-        updateHoverState();
+        // Listen for HOVER state
+        mContext.getContentResolver().registerContentObserver(
+                //Settings.System.getUriFor(Settings.System.HOVER_STATE),
+                Settings.System.getUriFor(Settings.System.HOVER_ACTIVE),
+                        false, new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange) {
+                //updateHoverState();
+                updateHoverActive();
+            }
+        });
+
+        //updateHoverState();
+        updateHoverActive();
 
         mContext.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.DIALPAD_STATE),
@@ -675,7 +692,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
     }
 
-    protected void updateHoverState() {
+    /*protected void updateHoverState() {
         mHoverState = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.HOVER_STATE, HOVER_DISABLED);
 
@@ -684,7 +701,32 @@ public abstract class BaseStatusBar extends SystemUI implements
                         : R.drawable.ic_notify_hover_normal);
 
         mHover.setHoverActive(mHoverState == HOVER_ENABLED);
+    }*/
+
+    protected void updateHoverButton(boolean shouldBeVisible) {
+        mHoverButton.setVisibility((mHoverEnabled && shouldBeVisible) ? View.VISIBLE : View.GONE);
     }
+
+    protected void updateHoverButton() {
+        updateHoverButton(true);
+    }
+  
+    public void updateHoverActive() {
+        mHoverEnabled = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HOVER_ENABLED, 0) == 1;
+
+        mHoverActive = mHoverEnabled &&
+                Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HOVER_ACTIVE, 0) == 1;
+
+        updateHoverButton();
+        if (mHoverEnabled) {
+            mHoverButton.setImageResource(mHoverActive ?
+                    R.drawable.ic_notify_hover_pressed : R.drawable.ic_notify_hover_normal);
+        }
+  
+        mHover.setHoverActive(mHoverActive);
+      }
 
     public void userSwitched(int newUserId) {
         // should be overridden
@@ -1714,8 +1756,10 @@ public abstract class BaseStatusBar extends SystemUI implements
 
         boolean updateTicker = (notification.getNotification().tickerText != null
                 && !TextUtils.equals(notification.getNotification().tickerText,
+                        //oldEntry.notification.getNotification().tickerText)) &&
+                        //(mHoverState == HOVER_DISABLED) || mHaloActive;
                         oldEntry.notification.getNotification().tickerText)) &&
-                        (mHoverState == HOVER_DISABLED) || mHaloActive;
+                        !mHoverActive || mHaloActive;
         boolean isTopAnyway = isTopNotification(rowParent, oldEntry);
         if (contentsUnchanged && bigContentsUnchanged && (orderUnchanged || isTopAnyway)) {
             if (DEBUG) Log.d(TAG, "reusing notification for key: " + key);
