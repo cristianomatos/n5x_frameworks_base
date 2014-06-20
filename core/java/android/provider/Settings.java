@@ -4269,6 +4269,13 @@ public final class Settings {
         public static final String VOICE_LAUNCH_INTENT = "voice_launch_intent";
 
         /**
+         * Hover: Only show up if Keyguard Showing is enabled, default is 1 (on).
+         *
+         * @hide
+         */
+        public static final String HOVER_KEYGUARD_UNSECURE_SHOWING = "hover_keyguard_unsecure_showing";
+
+        /**
          * Hover: Only show up if StatusBar is hidden, default is 1 (on).
          *
          * @hide
