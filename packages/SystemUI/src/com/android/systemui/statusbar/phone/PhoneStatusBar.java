@@ -3138,6 +3138,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     }
 
+    public boolean excludeTopmost() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HOVER_EXCLUDE_TOPMOST, 1) != 0;
+    }
+
     @Override
     public void topAppWindowChanged(boolean showMenu) {
         if (DEBUG) {
@@ -3186,16 +3191,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             if (0 == (mDisabled & (StatusBarManager.DISABLE_NOTIFICATION_ICONS
                             | StatusBarManager.DISABLE_NOTIFICATION_TICKER))) {
                 boolean blacklisted = false;
-                // don't pass notifications that run in Hover to Ticker
+                boolean foreground = false;
                 //if (mHoverState == HOVER_ENABLED) {
                 if (mHoverActive) {
+                    // don't pass notifications that run in Hover to Ticker
                     try {
                         blacklisted = getNotificationManager().isPackageAllowedForHover(n.getPackageName());
                     } catch (android.os.RemoteException ex) {
                         // System is dead
                     }
+
+                    // same foreground app? pass to ticker, hover doesn't show this one
+                    foreground = n.getPackageName().equals(
+                            getNotificationHelperInstance().getForegroundPackageName());
                 }
-                if (!blacklisted) mTicker.addEntry(n);
+                if (!blacklisted | foreground && excludeTopmost()) mTicker.addEntry(n);
             }
         }
     }
