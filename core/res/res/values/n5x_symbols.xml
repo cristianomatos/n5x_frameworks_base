@@ -44,4 +44,7 @@
   <java-symbol type="anim" name="recent_screen_enter_left" />
   <java-symbol type="anim" name="recent_screen_fade_out" />
 
+  <!-- AOSPA VolumePanel -->
+  <java-symbol type="drawable" name="ic_find_next_holo_dark" />
+  <java-symbol type="drawable" name="ic_find_previous_holo_dark" />
 </resources>

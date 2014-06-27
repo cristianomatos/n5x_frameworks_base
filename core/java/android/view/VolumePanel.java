@@ -43,6 +43,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.os.ServiceManager;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
@@ -95,6 +96,13 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     private static final int FREE_DELAY = 10000;
     private static final int TIMEOUT_DELAY = 3000;
 
+    private static final int ANIMATION_DURATION = 350; // same as hover view
+
+    public static final String ACTION_VOLUMEPANEL_SHOWN
+            = "android.view.volumepanel.SHOWN";
+    public static final String ACTION_VOLUMEPANEL_HIDDEN
+            = "android.view.volumepanel.HIDDEN";
+
     private static final int MSG_VOLUME_CHANGED = 0;
     private static final int MSG_FREE_RESOURCES = 1;
     private static final int MSG_PLAY_SOUND = 2;
@@ -117,9 +125,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     public static final int VOLUME_OVERLAY_EXPANDED = 2;
     public static final int VOLUME_OVERLAY_NONE = 3;
 
-    private static final int TRANSLUCENT_START_LEVEL = 208;
-    private static final int TRANSLUCENT_TO_OPAQUE_DURATION = 400;
-
     protected Context mContext;
     private AudioManager mAudioManager;
     protected AudioService mAudioService;
@@ -128,10 +133,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     private boolean mVoiceCapable;
     private boolean mVolumeLinkNotification;
     private int mCurrentOverlayStyle = -1;
-
-    private final boolean mTranslucentDialog;
-    private boolean mShouldRunDropTranslucentAnimation = false;
-    private boolean mRunningDropTranslucentAnimation = false;
 
     // True if we want to play tones on the system stream when the master stream is specified.
     private final boolean mPlayMasterStreamTones;
@@ -146,9 +147,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     /** Contains the sliders and their touchable icons */
     private final ViewGroup mSliderGroup;
     /** The button that expands the dialog to show all sliders */
-    private final View mMoreButton;
-    /** Dummy divider icon that needs to vanish with the more button */
-    private final View mDivider;
+    private final ImageView mMoreButton;
 
     /** Currently active stream that shows up at the top of the list of sliders */
     private int mActiveStreamType = -1;
@@ -293,7 +292,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         mContext = context;
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mAudioService = volumeService;
-        mTranslucentDialog = ActivityManager.isHighEndGfx();
 
         // For now, only show master volume if master volume is supported
         boolean useMasterVolume = context.getResources().getBoolean(
@@ -317,7 +315,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         mPanel = (ViewGroup) mView.findViewById(R.id.visible_panel);
         mSliderGroup = (ViewGroup) mView.findViewById(R.id.slider_group);
         mMoreButton = (ImageView) mView.findViewById(R.id.expand_button);
-        mDivider = (ImageView) mView.findViewById(R.id.expand_button_divider);
 
         mDialog = new Dialog(context, R.style.Theme_Panel_Volume) {
             public boolean onTouchEvent(MotionEvent event) {
@@ -343,9 +340,8 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         LayoutParams lp = window.getAttributes();
         lp.token = null;
         // Offset from the top
-        lp.y = mContext.getResources().getDimensionPixelOffset(
-                com.android.internal.R.dimen.volume_panel_top);
-        lp.type = LayoutParams.TYPE_VOLUME_OVERLAY;
+        lp.y = 0;
+        lp.type = LayoutParams.TYPE_STATUS_BAR_PANEL;
         lp.width = LayoutParams.WRAP_CONTENT;
         lp.height = LayoutParams.WRAP_CONTENT;
         window.setAttributes(lp);
@@ -381,8 +377,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
 
         mMoreButton.setOnClickListener(this);
         listenToRingerMode();
-
-        applyTranslucentWindow();
     }
 
     public void setLayoutDirection(int layoutDirection) {
@@ -413,7 +407,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
         switch (newStyle) {
             case VOLUME_OVERLAY_SINGLE :
                 mMoreButton.setVisibility(View.GONE);
-                mDivider.setVisibility(View.GONE);
                 mShowCombinedVolumes = false;
                 if (mCurrentOverlayStyle != -1) {
                     reorderSliders(mActiveStreamType);
@@ -422,7 +415,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                 break;
             case VOLUME_OVERLAY_EXPANDABLE :
                 mMoreButton.setVisibility(View.VISIBLE);
-                mDivider.setVisibility(View.VISIBLE);
                 mShowCombinedVolumes = true;
                 if (mCurrentOverlayStyle != -1) {
                     reorderSliders(mActiveStreamType);
@@ -431,7 +423,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                 break;
             case VOLUME_OVERLAY_EXPANDED :
                 mMoreButton.setVisibility(View.GONE);
-                mDivider.setVisibility(View.GONE);
                 mShowCombinedVolumes = true;
                 if (mCurrentOverlayStyle != -1) {
                     reorderSliders(mActiveStreamType);
@@ -538,7 +529,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     }
 
     private void addOtherVolumes() {
-        if (!mShowCombinedVolumes) return;
 
         for (int i = 0; i < STREAMS.length; i++) {
             // Skip the phone specific ones and the active one
@@ -586,7 +576,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     }
 
     private boolean isExpanded() {
-        return mMoreButton.getVisibility() != View.VISIBLE;
+        return mSliderGroup.getChildAt(1).getVisibility() == View.VISIBLE;
     }
 
     private void expand() {
@@ -596,8 +586,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                 mSliderGroup.getChildAt(i).setVisibility(View.VISIBLE);
             }
         }
-        mMoreButton.setVisibility(View.GONE);
-        mDivider.setVisibility(View.GONE);
+        mMoreButton.setImageResource(R.drawable.ic_find_previous_holo_dark);
     }
 
     private void hideSlider(int mActiveStreamType) {
@@ -611,12 +600,17 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     }
 
     private void collapse() {
-        mMoreButton.setVisibility(View.VISIBLE);
-        mDivider.setVisibility(View.VISIBLE);
         final int count = mSliderGroup.getChildCount();
         for (int i = 1; i < count; i++) {
             mSliderGroup.getChildAt(i).setVisibility(View.GONE);
         }
+        mMoreButton.setImageResource(R.drawable.ic_find_next_holo_dark);
+    }
+
+    private void sendIntent(String action) {
+        Intent i = new Intent(action);
+        //i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.sendBroadcast(i);
     }
 
     public void updateStates() {
@@ -850,7 +844,7 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
             mAudioManager.forceVolumeControlStream(stream);
             mDialog.setContentView(mView);
             // Showing dialog - use collapsed state
-            if (mShowCombinedVolumes && mCurrentOverlayStyle != VOLUME_OVERLAY_EXPANDED) {
+            if (mCurrentOverlayStyle != VOLUME_OVERLAY_EXPANDED) {
                 collapse();
             }
             // If just changed the style and we need to expand
@@ -858,6 +852,18 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
                 expand();
             }
             mDialog.show();
+            sendIntent(ACTION_VOLUMEPANEL_SHOWN);
+            Runnable r = new Runnable() {
+                public void run() {
+                    mView.setY(-mView.getHeight());
+                    mView.animate().y(0).setDuration(ANIMATION_DURATION);
+                }
+            };
+            if (mView.getHeight() == 0) {
+                new Handler().post(r);
+            } else {
+                r.run();
+            }
         }
 
         // Do a little vibrate if applicable (only when going into vibrate mode)
@@ -1102,9 +1108,13 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
 
             case MSG_TIMEOUT: {
                 if (mDialog.isShowing()) {
-                    applyTranslucentWindow();
-                    mDialog.dismiss();
-                    mActiveStreamType = -1;
+                    mView.animate().y(-mView.getHeight()).setDuration(ANIMATION_DURATION).withEndAction(new Runnable() {
+                        public void run() {
+                            sendIntent(ACTION_VOLUMEPANEL_HIDDEN);
+                            mDialog.dismiss();
+                            mActiveStreamType = -1;
+                        }
+                    });
                 }
                 synchronized (sConfirmSafeVolumeLock) {
                     if (sConfirmSafeVolumeDialog != null) {
@@ -1161,9 +1171,6 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     }
 
     public void onStartTrackingTouch(SeekBar seekBar) {
-        if (mTranslucentDialog && mShouldRunDropTranslucentAnimation) {
-            startRemoveTranslucentAnimation();
-        }
     }
 
     public void onStopTrackingTouch(SeekBar seekBar) {
@@ -1181,11 +1188,12 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
     }
 
     public void onClick(View v) {
-        if (mTranslucentDialog && mShouldRunDropTranslucentAnimation) {
-            startRemoveTranslucentAnimation();
-        }
         if (v == mMoreButton) {
-            expand();
+            if (isExpanded()) {
+                collapse();
+            } else {
+                expand();
+            }
         } else if (v instanceof ImageView) {
             Intent volumeSettings = new Intent(android.provider.Settings.ACTION_SOUND_SETTINGS);
             volumeSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
@@ -1194,47 +1202,5 @@ public class VolumePanel extends Handler implements OnSeekBarChangeListener, Vie
             return;
         }
         resetTimeout();
-    }
-
-    private void applyTranslucentWindow() {
-        if (!mTranslucentDialog || mRunningDropTranslucentAnimation) return;
-
-        mPanel.getBackground().setAlpha(TRANSLUCENT_START_LEVEL);
-        mMoreButton.setAlpha(TRANSLUCENT_START_LEVEL);
-        mDivider.setAlpha(TRANSLUCENT_START_LEVEL);
-        mShouldRunDropTranslucentAnimation = true;
-    }
-
-    private void startRemoveTranslucentAnimation() {
-        if (mRunningDropTranslucentAnimation) return;
-        mRunningDropTranslucentAnimation = true;
-
-        AnimatorSet set = new AnimatorSet();
-        Animator panelAlpha = ObjectAnimator.ofInt(
-                mPanel.getBackground(), "alpha", mPanel.getBackground().getAlpha(), 255);
-        Animator moreAlpha = ObjectAnimator.ofFloat(
-                mMoreButton, "alpha", mMoreButton.getAlpha(), 255);
-        Animator dividerAlpha = ObjectAnimator.ofFloat(
-                mDivider, "alpha", mDivider.getAlpha(), 255);
-        set.setInterpolator(new AccelerateInterpolator());
-        set.addListener(new AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {}
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mRunningDropTranslucentAnimation = false;
-                mShouldRunDropTranslucentAnimation = false;
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {}
-        });
-        set.setDuration(TRANSLUCENT_TO_OPAQUE_DURATION);
-        set.playTogether(panelAlpha, moreAlpha, dividerAlpha);
-        set.start();
     }
 }
