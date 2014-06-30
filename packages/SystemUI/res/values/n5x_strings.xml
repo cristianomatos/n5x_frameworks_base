@@ -86,4 +86,7 @@
     <!-- HOVER Tile-->
     <string name="quick_settings_hover">HOVER</string>
     <string name="quick_settings_hover_off">HOVER OFF</string>
+
+    <!-- Heads up -->
+    <string name="heads_up_snooze_message">Heads up is disabled for <xliff:g id="number">%d</xliff:g> minutes.</string>
 </resources>
