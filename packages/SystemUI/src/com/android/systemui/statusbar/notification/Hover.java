@@ -393,7 +393,7 @@ public class Hover {
 
     public boolean requireFullscreenMode() {
         return Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.HOVER_REQUIRE_FULLSCREEN_MODE, 1) != 0;
+                Settings.System.HOVER_REQUIRE_FULLSCREEN_MODE, 0) != 0;
     }
 
     public boolean excludeNonClearable() {
