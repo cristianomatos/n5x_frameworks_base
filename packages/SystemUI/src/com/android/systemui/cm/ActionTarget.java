@@ -1,6 +1,6 @@
 /*
+ * Copyright (C) 2013-2014 The CyanogenMod Project
  * Copyright (C) 2013 AOKP by Mike Wilson - Zaphod-Beeblebrox && Steve Spear - Stevespear426
- * Copyright (C) 2013 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,10 +54,9 @@ import com.android.systemui.screenshot.TakeScreenshotService;
 
 import java.net.URISyntaxException;
 
-/*
+/**
  * Helper classes for managing custom actions
  */
-
 public class ActionTarget {
     private static final String TAG = "ActionTarget";
 
@@ -88,8 +87,9 @@ public class ActionTarget {
                 dismissKeyguard();
                 getStatusBarService().toggleRecentApps();
             } catch (RemoteException e) {
-                // ignored
+                // Do nothing here
             }
+
             return true;
         } else if (action.equals(ACTION_HOME)) {
             injectKeyDelayed(KeyEvent.KEYCODE_HOME);
@@ -100,10 +100,10 @@ public class ActionTarget {
         } else if (action.equals(ACTION_MENU)) {
             injectKeyDelayed(KeyEvent.KEYCODE_MENU);
             return true;
-        } else if (action.equals(ACTION_POWER)) {
+        } else if (action.equals(ACTION_STANDBY)) {
             injectKeyDelayed(KeyEvent.KEYCODE_POWER);
             return true;
-        } else if (action.equals(ACTION_IME)) {
+        } else if (action.equals(ACTION_IME_SWITCHER)) {
             mContext.sendBroadcast(new Intent("android.settings.SHOW_INPUT_METHOD_PICKER"));
             return true;
         } else if (action.equals(ACTION_SCREENSHOT)) {
@@ -123,7 +123,7 @@ public class ActionTarget {
             }
 
             return true;
-        } else if (action.equals(ACTION_KILL)) {
+        } else if (action.equals(ACTION_KILL_TASK)) {
             mHandler.post(mKillRunnable);
             return true;
         } else if (action.equals(ACTION_VIBRATE)) {
@@ -132,6 +132,7 @@ public class ActionTarget {
             } else {
                 switchToNormalRingerMode();
             }
+
             return true;
         } else if (action.equals(ACTION_SILENT)) {
             if (mAm.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
@@ -139,6 +140,7 @@ public class ActionTarget {
             } else {
                 switchToNormalRingerMode();
             }
+
             return true;
         } else if (action.equals(ACTION_RING_SILENT_VIBRATE)) {
             int ringerMode = mAm.getRingerMode();
@@ -149,13 +151,15 @@ public class ActionTarget {
             } else {
                 switchToNormalRingerMode();
             }
+
             return true;
         } else if (action.equals(ACTION_NOTIFICATIONS)) {
             try {
                 getStatusBarService().expandNotificationsPanel();
             } catch (RemoteException e) {
-                // ignored
+                // Do nothing here
             }
+
             return true;
         } else if (action.equals(ACTION_TORCH)) {
             Intent intent = new Intent(TorchConstants.ACTION_TOGGLE_STATE);
@@ -183,6 +187,7 @@ public class ActionTarget {
             } catch (ActivityNotFoundException e) {
                 Log.e(TAG, "ActivityNotFound: [" + action + "]");
             }
+
             return false;
         }
     }
@@ -203,7 +208,7 @@ public class ActionTarget {
         try {
             ActivityManagerNative.getDefault().dismissKeyguardOnNextActivity();
         } catch (RemoteException e) {
-            // ignored
+            // Do nothing here
         }
     }
 
@@ -236,7 +241,9 @@ public class ActionTarget {
         mHandler.removeCallbacks(mInjectKeyDownRunnable);
         mHandler.removeCallbacks(mInjectKeyUpRunnable);
         mHandler.post(mInjectKeyDownRunnable);
-        mHandler.postDelayed(mInjectKeyUpRunnable,10); // introduce small delay to handle key press
+
+        // Introduce small delay to handle key press
+        mHandler.postDelayed(mInjectKeyUpRunnable, 10);
     }
 
     final Runnable mInjectKeyDownRunnable = new Runnable() {
@@ -245,7 +252,8 @@ public class ActionTarget {
                     KeyEvent.ACTION_DOWN, mInjectKeyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                     KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
                     InputDevice.SOURCE_KEYBOARD);
-            InputManager.getInstance().injectInputEvent(ev, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+            InputManager.getInstance().injectInputEvent(
+                    ev, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
         }
     };
 
@@ -255,7 +263,8 @@ public class ActionTarget {
                     KeyEvent.ACTION_UP, mInjectKeyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD, 0,
                     KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
                     InputDevice.SOURCE_KEYBOARD);
-            InputManager.getInstance().injectInputEvent(ev, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
+            InputManager.getInstance().injectInputEvent(
+                    ev, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
         }
     };
 
@@ -273,7 +282,7 @@ public class ActionTarget {
             if (res.activityInfo != null && !res.activityInfo.packageName.equals("android")) {
                 homePackage = res.activityInfo.packageName;
             } else {
-                // use default launcher package if we couldn't resolve it
+                // Use default launcher package if we couldn't resolve it
                 homePackage = "com.android.launcher";
             }
 
@@ -304,6 +313,7 @@ public class ActionTarget {
             if (mScreenshotConnection != null) {
                 return;
             }
+
             Intent intent = new Intent(mContext, TakeScreenshotService.class);
             ServiceConnection conn = new ServiceConnection() {
                 @Override
@@ -312,6 +322,7 @@ public class ActionTarget {
                         if (mScreenshotConnection != this) {
                             return;
                         }
+
                         Messenger messenger = new Messenger(service);
                         Message msg = Message.obtain(null, 1);
                         final ServiceConnection myConn = this;
@@ -329,24 +340,26 @@ public class ActionTarget {
                         };
                         msg.replyTo = new Messenger(h);
                         msg.arg1 = msg.arg2 = 0;
-                        // wait for the dialog box to close
+
+                        // Wait for the dialog box to close
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ie) {
-                        // Do nothing here
+                            // Do nothing here
                         }
 
-                        // take the screenshot
+                        // Take the screenshot
                         try {
                             messenger.send(msg);
                         } catch (RemoteException e) {
-                        // Do nothing here
+                            // Do nothing here
                         }
                     }
                 }
 
                 @Override
                 public void onServiceDisconnected(ComponentName name) {
+                    // Do nothing here
                 }
             };
 
