@@ -199,16 +199,16 @@ public class ButtonsHelper {
         } else if (clickAction.equals(NavigationRingConstants.ACTION_MENU_BIG)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_menu_big", null, null);
-        } else if (clickAction.equals(NavigationRingConstants.ACTION_IME)) {
+        } else if (clickAction.equals(NavigationRingConstants.ACTION_IME_SWITCHER)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_ime_switcher", null, null);
         } else if (clickAction.equals(NavigationRingConstants.ACTION_EXPANDED_DESKTOP)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_expanded_desktop", null, null);
-        } else if (clickAction.equals(NavigationRingConstants.ACTION_KILL)) {
+        } else if (clickAction.equals(NavigationRingConstants.ACTION_KILL_TASK)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_killtask", null, null);
-        } else if (clickAction.equals(NavigationRingConstants.ACTION_POWER)) {
+        } else if (clickAction.equals(NavigationRingConstants.ACTION_STANDBY)) {
             resId = systemUiResources.getIdentifier(
                         SYSTEMUI_METADATA_NAME + ":drawable/ic_sysbar_power", null, null);
         } else if (clickAction.equals(NavigationRingConstants.ACTION_NOTIFICATIONS)) {
