@@ -3827,15 +3827,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mShowStatusBarCarrier = Settings.System.getInt(
                 resolver, Settings.System.STATUS_BAR_CARRIER, 0) == 1;
         showStatusBarCarrierLabel(mShowStatusBarCarrier);
-    }
-
-    public void showStatusBarCarrierLabel(boolean show) {
-        if (mStatusBarView == null) return;
-        ContentResolver resolver = mContext.getContentResolver();
-        View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
-        if (statusBarCarrierLabel != null) {
-            statusBarCarrierLabel.setVisibility(show ? (mShowStatusBarCarrier ? View.VISIBLE : View.GONE) : View.GONE);
-        }
 
         mFlipInterval = Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.REMINDER_ALERT_INTERVAL, 1500, UserHandle.USER_CURRENT);
@@ -3855,6 +3846,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
             enableOrDisableReminder();
+        }
+    }
+
+    public void showStatusBarCarrierLabel(boolean show) {
+        if (mStatusBarView == null) return;
+        ContentResolver resolver = mContext.getContentResolver();
+        View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
+        if (statusBarCarrierLabel != null) {
+            statusBarCarrierLabel.setVisibility(show ? (mShowStatusBarCarrier ? View.VISIBLE : View.GONE) : View.GONE);
         }
     }
 
