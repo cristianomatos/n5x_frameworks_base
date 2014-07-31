@@ -1942,20 +1942,18 @@ public abstract class BaseStatusBar extends SystemUI implements
         final KeyguardTouchDelegate keyguard = KeyguardTouchDelegate.getInstance(mContext);
         boolean keyguardNotVisible = !keyguard.isShowingAndNotHidden()
                 && !keyguard.isInputRestricted();
-        boolean keyguardVisibleNotSecure =
-                keyguard.isShowingAndNotHidden() && !keyguard.isSecure();
 
         // Possibly a heads up from an app with native support.
         boolean interrupt = (isFullscreen || (isHighPriority && isNoisy) || isRequested)
                 && isAllowed
                 && mPowerManager.isScreenOn()
-                && (keyguardNotVisible || keyguardVisibleNotSecure);
+                && (keyguardNotVisible);
 
         // Possibly a heads up package set from the user.
         interrupt = interrupt
                 || (!isOngoing
                 && mPowerManager.isScreenOn()
-                && (keyguardNotVisible || keyguardVisibleNotSecure));
+                && (keyguardNotVisible));
 
         try {
             interrupt = interrupt && !mDreamManager.isDreaming();
