@@ -341,6 +341,11 @@ public class Hover {
                 Settings.System.HOVER_KEYGUARD_UNSECURE_SHOWING, 1) != 0 && mKeyguardManager.isKeyguardLocked();
     }
 
+    public boolean isHeadsupShowing() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.HEADS_UP_NOTIFICATION, 0) != 0;
+    }
+
     public boolean isKeyguardSecureShowing() {
         return mKeyguardManager.isKeyguardLocked() && mKeyguardManager.isKeyguardSecure();
     }
@@ -722,7 +727,7 @@ public class Hover {
         }
 
         // second, if we've just expanded statusbar or turned screen off return
-        if (!isScreenOn() | isStatusBarExpanded() | isKeyguardSecureShowing() | isKeyguardUnsecureShowing()) {
+        if (!isScreenOn() | isStatusBarExpanded() | isKeyguardSecureShowing() | isKeyguardUnsecureShowing() | isHeadsupShowing()) {
             if (mShowing) {
                 dismissHover(true, true);
             } else {
