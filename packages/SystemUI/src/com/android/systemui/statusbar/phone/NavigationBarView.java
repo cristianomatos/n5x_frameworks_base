@@ -103,8 +103,8 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
     int mNavigationIconHints = 0;
 
     private Drawable mBackIcon, mBackLandIcon, mBackAltIcon, mBackAltLandIcon,
-            mRecentIcon, mRecentLandIcon, mRecentAltIcon, mRecentAltLandIcon,
-            mHomeIcon, mHomeLandIcon;
+            mRecentIcon, mRecentLandIcon, mRecentAltIcon, mRecentAltLandIcon;
+    private Drawable mHomeIcon, mHomeLandIcon;
 
     private DelegateViewHelper mDelegateHelper;
     private DeadZone mDeadZone;
@@ -174,22 +174,6 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
                     && mHomeAppearing && homeView != null && homeView.getAlpha() == 0) {
                 backView.setAlpha(0);
                 ValueAnimator a = ObjectAnimator.ofFloat(backView, "alpha", 0, 1);
-                a.setStartDelay(mStartDelay);
-                a.setDuration(mDuration);
-                a.setInterpolator(mInterpolator);
-                a.start();
-            }
-        }
-
-        public void onRecentsAltCleared() {
-            // When dismissing ime during unlock, force the back button to run the same appearance
-            // animation as home (if we catch this condition early enough).
-            View recentView = findButton(NavbarEditor.NAVBAR_RECENT);
-            View homeView = findButton(NavbarEditor.NAVBAR_HOME);
-            if (!mBackTransitioning && recentView != null && recentView.getVisibility() == VISIBLE
-                    && mHomeAppearing && homeView != null && homeView.getAlpha() == 0) {
-                recentView.setAlpha(0);
-                ValueAnimator a = ObjectAnimator.ofFloat(recentView, "alpha", 0, 1);
                 a.setStartDelay(mStartDelay);
                 a.setDuration(mDuration);
                 a.setInterpolator(mInterpolator);
@@ -505,25 +489,6 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
         setDisabledFlags(mDisabledFlags, true /* force */);
     }
 
-    public void updateRecents() {
-        removeButtonListeners();
-        updateButtonListeners();
-        setDisabledFlags(mDisabledFlags, true /* force */);
-
-        // restore previous views in case the cursor keys WERE showing and
-        // are should now be hidden while the IME is up.
-        View one = getCurrentView().findViewById(mVertical ? R.id.six : R.id.one);
-        View six = getCurrentView().findViewById(mVertical ? R.id.one : R.id.six);
-        if (mSlotOneVisibility != -1 && one != null) {
-            one.setVisibility(mSlotOneVisibility);
-            mSlotOneVisibility = -1;
-        }
-        if (mSlotSixVisibility != -1 && six != null) {
-            six.setVisibility(mSlotSixVisibility);
-            mSlotSixVisibility = -1;
-        }
-    }
-
     public void notifyScreenOn(boolean screenOn) {
         mScreenOn = screenOn;
         setDisabledFlags(mDisabledFlags, true);
@@ -531,23 +496,17 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
 
     public void setNavigationIconHints(int hints) {
         setNavigationIconHints(NavigationCallback.NAVBAR_BACK_HINT, hints, false);
-        setNavigationIconHints(NavigationCallback.NAVBAR_HOME_HINT, hints, false);
     }
 
     public void setNavigationIconHints(int hints, boolean force) {
         setNavigationIconHints(NavigationCallback.NAVBAR_BACK_HINT, hints, force);
-        setNavigationIconHints(NavigationCallback.NAVBAR_HOME_HINT, hints, force);
     }
 
     public void setNavigationIconHints(int button, int hints, boolean force) {
         if (!force && hints == mNavigationIconHints) return;
         final boolean backAlt = (hints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0;
-        final boolean recentsAlt = (hints & StatusBarManager.NAVIGATION_HINT_RECENT_ALT) != 0;
         if ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_BACK_ALT) != 0 && !backAlt) {
             mTransitionListener.onBackAltCleared();
-        }
-        if ((mNavigationIconHints & StatusBarManager.NAVIGATION_HINT_RECENT_ALT) != 0 && !recentsAlt) {
-            mTransitionListener.onRecentsAltCleared();
         }
         if (DEBUG) {
             android.widget.Toast.makeText(mContext,
@@ -569,14 +528,15 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
             }
         } else if (button == NavigationCallback.NAVBAR_RECENTS_HINT) {
             if (recentView != null) {
-                recentView.setImageDrawable(recentsAlt
-                        ? (mVertical ? mRecentAltLandIcon : mRecentAltIcon)
-                        : (mVertical ? mRecentLandIcon : mRecentIcon));
+                recentView.setImageDrawable(
+                (0 != (hints & StatusBarManager.NAVIGATION_HINT_RECENT_ALT))
+                    ? (mVertical ? mRecentAltLandIcon : mRecentAltIcon)
+                    : (mVertical ? mRecentLandIcon : mRecentIcon));
             }
-        } else if (button == NavigationCallback.NAVBAR_HOME_HINT) {
-            if (homeView != null) {
-                homeView.setImageDrawable(mVertical ? mHomeLandIcon : mHomeIcon);
-            }
+        }
+
+        if (homeView != null) {
+            homeView.setImageDrawable(mVertical ? mHomeLandIcon : mHomeIcon);
         }
 
         setDisabledFlags(mDisabledFlags, true);
@@ -607,7 +567,11 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
             }
         }
 
-    updateRecents();
+        View one = getCurrentView().findViewById(mVertical ? R.id.six : R.id.one);
+        View six = getCurrentView().findViewById(mVertical ? R.id.one : R.id.six);
+
+        one.setVisibility(mSlotOneVisibility);
+        six.setVisibility(mSlotSixVisibility);
     }
 
     public int getNavigationIconHints() {
@@ -826,13 +790,13 @@ public class NavigationBarView extends LinearLayout implements NavigationCallbac
             Log.d(TAG, "reorient(): rot=" + mDisplay.getRotation());
         }
 
+        setNavigationIconHints(mNavigationIconHints, true);
+
         ImageView recentView = (ImageView) findButton(NavbarEditor.NAVBAR_RECENT);
 
         // Reset recents hints after reorienting
         recentView.setImageDrawable(mVertical
                 ? mRecentLandIcon : mRecentIcon);
-
-        setNavigationIconHints(mNavigationIconHints, true);
     }
 
     View findButton(NavbarEditor.ButtonInfo info) {
