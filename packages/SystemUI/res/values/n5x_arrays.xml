@@ -21,11 +21,11 @@
 
     <string-array name="recommend_governors" translatable="false">
         <!-- <item>conservative</item> -->
-        <item>wheatley</item>
-        <item>intellidemand</item>
+        <!-- <item>wheatley</item> -->
+        <!-- <item>intellidemand</item> -->
         <!-- <item>hotplug</item> -->
-        <item>ondemand</item>
-        <item>interactive</item>
+        <!-- <item>ondemand</item> -->
+        <!-- <item>interactive</item> -->
     </string-array>
 
     <string-array name="exynos_blacklist_governors" translatable="false">
