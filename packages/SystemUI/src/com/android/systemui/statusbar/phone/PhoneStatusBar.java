@@ -1534,6 +1534,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private View.OnClickListener mRecentsClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
             awakenDreams();
             toggleRecentApps();
         }
