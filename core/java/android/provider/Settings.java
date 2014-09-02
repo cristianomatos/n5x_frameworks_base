@@ -3924,32 +3924,6 @@ public final class Settings {
         public static final String SCREEN_RECORDER_RECORD_AUDIO = "screen_recorder_record_audio";
 
         /**
-         * Whether power saver is enabled
-         * @hide
-         */
-        public static final String POWER_SAVER_ENABLED = "power_saver_enabled";
-
-        /**
-         * @hide
-         */
-        public static final String POWER_SAVER_CPU = "power_saver_cpu";
-
-        /**
-         * @hide
-         */
-        public static final String POWER_SAVER_CPU_DEFAULT = "power_saver_cpu_default";
-
-        /**
-         * @hide
-         */
-        public static final String POWER_SAVER_GPS = "power_saver_gps";
-
-        /**
-         * @hide
-         */
-        public static final String POWER_SAVER_MOBILE_DATA = "power_saver_mobile_data";
-
-        /**
          * Height of navigation bar buttons
          * @hide
          */
