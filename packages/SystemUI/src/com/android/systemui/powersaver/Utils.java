@@ -22,15 +22,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
-import android.content.Context;
 import android.os.SystemProperties;
-import android.os.UserHandle;
-import android.provider.Settings;
 import android.util.Log;
-
-import com.android.systemui.R;
 
 public class Utils {
 
@@ -42,29 +36,20 @@ public class Utils {
     private static String availableGovernorsLine;
     private static String recommendGovernor;
     private static String[] availableGovernors = new String[0];
+    private static String[] recommendGovernors = {
+            "conservative", "intellidemand", "ondemand", "interactive"
+    };
 
     public static String getDefalutGovernor() {
         return fileReadOneLine(Utils.GOV_FILE);
     }
 
-    public static String getRecommendGovernor(Context mContext) {
-        String [] recommendGovernors = mContext.getResources().getStringArray(R.array.recommend_governors);
-
-        boolean isExynos = SystemProperties.get("ro.board.platform").toLowerCase().contains("exynos");
-        if (isExynos) {
-            String [] blacklistGovernors = mContext.getResources().getStringArray(R.array.exynos_blacklist_governors);
-            String defGov = Settings.System.getStringForUser(mContext.getContentResolver(), Settings.System.POWER_SAVER_CPU_GOVERNOR_DEFAULT, UserHandle.USER_CURRENT_OR_SELF);
-            List<String> blackList = Arrays.asList(blacklistGovernors);
-            if (blackList.contains(defGov)) {
-                return null;
-            }
-        }
-
+    public static String getRecommendGovernor() {
         availableGovernorsLine = fileReadOneLine(GOV_LIST_FILE);
         availableGovernors = availableGovernorsLine.split(" ");
         for (int i = 0; i < recommendGovernors.length; i++) {
-            List<String> govList = Arrays.asList(availableGovernors);
-            if (govList.contains(recommendGovernors[i])) {
+            int index = Arrays.binarySearch(availableGovernors, recommendGovernors[i]);
+            if (index != -1) {
                 recommendGovernor = recommendGovernors[i];
                 break;
             }

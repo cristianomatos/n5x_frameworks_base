@@ -16,9 +16,6 @@
 
 package com.android.systemui.powersaver;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,31 +28,23 @@ import android.util.Log;
 import android.database.ContentObserver;
 import android.content.ContentResolver;
 import android.os.Handler;
-import android.os.UserHandle;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.android.systemui.powersaver.Utils;
-import com.android.systemui.R;
 
 public class PowerSaverService extends Service  {
 
-    protected static final int POWERSAVER_NOTIFICATION_ID = 888;
-
     private static final String TAG = "PowerSaverService";
     private BroadcastReceiver mPowerKeyReceiver;
-    private CpuGovernorToggle mCpuGovernorToggle;
+    private CpuToggle mCpuToggle;
     private GpsToggle mGpsToggle;
     private MobileDataToggle mMobileDataToggle;
     private boolean mEnabled = true;
-    private boolean mNotification;
     private Context mContext;
-    private ContentResolver mContentResolver;
     private List<PowerSaverToggle> fEnabledToggles;
     private List<PowerSaverToggle> fAllToggles;
-    private NotificationManager nm;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -64,39 +53,27 @@ public class PowerSaverService extends Service  {
 
     @Override
     public void onDestroy() {
-        //Log.d(TAG, "onDestroy");
+        Log.d(TAG, "onDestroy");
         if (mEnabled) {
             unregisterReceiver();
-            if (mNotification) {
-                nm.cancel(POWERSAVER_NOTIFICATION_ID);
-            }
-            updatePowerSaveProfile(false);
         }
     }
 
     @Override
     public void onStart(Intent intent, int startid) {
-        //Log.d(TAG, "onStart");
+        Log.d(TAG, "onStart");
         mContext = getApplicationContext();
-        mContentResolver = mContext.getContentResolver();
+
         // firewall
-        mEnabled = Settings.System.getIntForUser(mContentResolver, Settings.System.POWER_SAVER_ENABLED, 1, UserHandle.USER_CURRENT_OR_SELF) != 0;
-        mNotification = Settings.System.getIntForUser(mContentResolver, Settings.System.POWER_SAVER_NOTIFICATION, 1, UserHandle.USER_CURRENT_OR_SELF) != 0;
+        mEnabled = Settings.System.getInt(mContext.getContentResolver(), Settings.System.POWER_SAVER_ENABLED, 1) != 0;
 
         if (mEnabled) {
             registerBroadcastReceiver();
-            if (mNotification) {
-                addNotification();
-            }
-            boolean mPowerSaveEnabled = Settings.System.getIntForUser(mContentResolver, Settings.System.PERFORMANCE_PROFILE, 0, UserHandle.USER_CURRENT_OR_SELF) != 0;
-            if (mPowerSaveEnabled) {
-                updatePowerSaveProfile(true);
-            }
         }
 
         fAllToggles = new ArrayList<PowerSaverToggle>();
-        mCpuGovernorToggle = new CpuGovernorToggle(mContext);
-        fAllToggles.add(mCpuGovernorToggle);
+        mCpuToggle = new CpuToggle(mContext);
+        fAllToggles.add(mCpuToggle);
         mGpsToggle = new GpsToggle(mContext);
         fAllToggles.add(mGpsToggle);
         mMobileDataToggle = new MobileDataToggle(mContext);
@@ -105,32 +82,12 @@ public class PowerSaverService extends Service  {
         updateEnabledToggles();
     }
 
-    private void addNotification() {
-        nm = (NotificationManager) mContext
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent mIntent = new Intent();
-        mIntent.setClassName("com.android.settings",
-                "com.android.settings.Settings$PowerSaverSettingsActivity");
-        PendingIntent contentIntent = PendingIntent.getActivity(mContext,
-                0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification.Builder notification = new Notification.Builder(mContext)
-                .setContentIntent(contentIntent)
-                .setTicker(mContext.getString(R.string.power_saver_notification_ticker))
-                .setContentTitle(mContext.getString(R.string.power_saver_notification_title))
-                .setSmallIcon(R.drawable.ic_notification_powersaver)
-                .setWhen(0)
-                .setOngoing(true)
-                .setContentText(mContext.getString(R.string.power_saver_notification_text));
-        nm.notify(POWERSAVER_NOTIFICATION_ID, notification.build());
-    }
-
     private void registerBroadcastReceiver() {
         final IntentFilter theFilter = new IntentFilter();
         /** System Defined Broadcast */
         theFilter.addAction(Intent.ACTION_SCREEN_ON);
         theFilter.addAction(Intent.ACTION_SCREEN_OFF);
         theFilter.addAction("android.intent.action.POWER_SAVER_SERVICE_UPDATE");
-        theFilter.addAction("android.intent.action.POWER_SAVER_NOTIFICATION");
 
         mPowerKeyReceiver = new BroadcastReceiver() {
             @Override
@@ -138,7 +95,7 @@ public class PowerSaverService extends Service  {
                 String strAction = intent.getAction();
 
                 if (strAction.equals(Intent.ACTION_SCREEN_OFF)) {
-                    //Log.d(TAG, "screen off");
+                    Log.d(TAG, "screen off");
                     Iterator<PowerSaverToggle> nextToggle = fEnabledToggles.iterator();
                     while(nextToggle.hasNext()) {
                         PowerSaverToggle toggle = nextToggle.next();
@@ -146,7 +103,7 @@ public class PowerSaverService extends Service  {
                     }
                 }
                 if (strAction.equals(Intent.ACTION_SCREEN_ON)) {
-                    //Log.d(TAG, "screen on");
+                    Log.d(TAG, "screen on");
                     Iterator<PowerSaverToggle> nextToggle = fEnabledToggles.iterator();
                     while(nextToggle.hasNext()) {
                         PowerSaverToggle toggle = nextToggle.next();
@@ -154,40 +111,24 @@ public class PowerSaverService extends Service  {
                     }
                 }
                 if (strAction.equals("android.intent.action.POWER_SAVER_SERVICE_UPDATE")) {
-                    //Log.d(TAG, "update enabled toggles");
+                    Log.d(TAG, "update enabled toggles");
                     updateEnabledToggles();
-                } else if (strAction.equals("android.intent.action.POWER_SAVER_NOTIFICATION")) {
-                    mNotification = Settings.System.getIntForUser(mContentResolver, Settings.System.POWER_SAVER_NOTIFICATION, 1, UserHandle.USER_CURRENT_OR_SELF) != 0;
-                    if (mNotification) {
-                        addNotification();
-                    } else {
-                        nm.cancel(POWERSAVER_NOTIFICATION_ID);
-                    }
                 }
             }
         };
 
-        //Log.d(TAG, "registerBroadcastReceiver");
+        Log.d(TAG, "registerBroadcastReceiver");
         mContext.registerReceiver(mPowerKeyReceiver, theFilter);
     }
 
     private void unregisterReceiver() {
         try {
-            //Log.d(TAG, "unregisterReceiver");
+            Log.d(TAG, "unregisterReceiver");
             mContext.unregisterReceiver(mPowerKeyReceiver);
         }
         catch (IllegalArgumentException e) {
             mPowerKeyReceiver = null;
         }
-    }
-
-    private void updatePowerSaveProfile(boolean enabled) {
-        String [] pwrsvValue = getResources().getStringArray(com.android.internal.R.array.perf_profile_values);
-        if (Settings.System.getIntForUser(mContext.getContentResolver(), Settings.System.POWER_SAVER_CPU_PROFILE, 1, UserHandle.USER_CURRENT_OR_SELF) != 0) {
-        Settings.System.putStringForUser(mContentResolver, Settings.System.PERFORMANCE_PROFILE, enabled ? pwrsvValue[0] : pwrsvValue[1], UserHandle.USER_CURRENT_OR_SELF);
-        } else {
-        Settings.System.putStringForUser(mContentResolver, Settings.System.PERFORMANCE_PROFILE, enabled ? pwrsvValue[1] : pwrsvValue[1], UserHandle.USER_CURRENT_OR_SELF);
-	}
     }
 
     private void updateEnabledToggles() {
@@ -196,10 +137,10 @@ public class PowerSaverService extends Service  {
         while(nextToggle.hasNext()) {
             PowerSaverToggle toggle = nextToggle.next();
             if (toggle.isEnabled()) {
-                //Log.d(TAG, "active toggle "+ toggle.getClass().getName());
+                Log.d(TAG, "active toggle "+ toggle.getClass().getName());
                 fEnabledToggles.add(toggle);
-                if (toggle.getClass().getName().contains("CpuGovernorToggle")) {
-                    Settings.System.putStringForUser(mContentResolver, Settings.System.POWER_SAVER_CPU_GOVERNOR_DEFAULT, Utils.getDefalutGovernor(), UserHandle.USER_CURRENT_OR_SELF);
+                if (toggle.getClass().getName().contains("CpuToggle")) {
+                    Settings.System.putString(mContext.getContentResolver(), Settings.System.POWER_SAVER_CPU_DEFAULT, Utils.getDefalutGovernor());
                 }
             }
         }

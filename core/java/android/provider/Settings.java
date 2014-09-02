@@ -3932,17 +3932,12 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String POWER_SAVER_CPU_PROFILE = "power_saver_cpu_profile";
+        public static final String POWER_SAVER_CPU = "power_saver_cpu";
 
         /**
          * @hide
          */
-        public static final String POWER_SAVER_CPU_GOVERNOR = "power_saver_cpu_governor";
-
-        /**
-         * @hide
-         */
-        public static final String POWER_SAVER_CPU_GOVERNOR_DEFAULT = "power_saver_cpu_governor_default";
+        public static final String POWER_SAVER_CPU_DEFAULT = "power_saver_cpu_default";
 
         /**
          * @hide
@@ -3953,11 +3948,6 @@ public final class Settings {
          * @hide
          */
         public static final String POWER_SAVER_MOBILE_DATA = "power_saver_mobile_data";
-
-        /**
-         * @hide
-         */
-        public static final String POWER_SAVER_NOTIFICATION = "power_saver_notification";
 
         /**
          * Height of navigation bar buttons

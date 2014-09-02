@@ -85,8 +85,8 @@ public class PerformanceProfileTile extends QuickSettingsTile {
             current = 0;
         }
         mPm.setPowerProfile(mPerfProfileValues[current]);
-        Settings.System.putStringForUser(mContext.getContentResolver(),
-                Settings.System.PERFORMANCE_PROFILE, mPerfProfileValues[current], UserHandle.USER_CURRENT_OR_SELF);
+        Settings.System.putString(mContext.getContentResolver(),
+                Settings.System.PERFORMANCE_PROFILE, mPerfProfileValues[current]);
     }
 
     private void updateCurrentValue() {
