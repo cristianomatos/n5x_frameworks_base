@@ -23,7 +23,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.PowerManager;
-import android.os.UserHandle;
 import android.provider.Settings;
 import android.view.View;
 
@@ -85,8 +84,6 @@ public class PerformanceProfileTile extends QuickSettingsTile {
             current = 0;
         }
         mPm.setPowerProfile(mPerfProfileValues[current]);
-        Settings.System.putString(mContext.getContentResolver(),
-                Settings.System.PERFORMANCE_PROFILE, mPerfProfileValues[current]);
     }
 
     private void updateCurrentValue() {
@@ -128,4 +125,3 @@ public class PerformanceProfileTile extends QuickSettingsTile {
     }
 
 }
-
