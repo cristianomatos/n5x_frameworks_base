@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Content description of the halo button in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+    <string name="accessibility_halo">创建halo通知。</string>
+
+    <!-- HALO -->
+    <string name="halo_dismiss">清除通知</string>
+    <string name="halo_hide">隐藏</string>
+    <string name="halo_clear_all">清除所有通知</string>
+    <string name="halo_silence">隐藏并沉默，直到被唤醒</string>
+    <string name="halo_tutorial1">这就是 HALO</string>
+    <string name="halo_tutorial2">移动：双击并拖动</string>
+    <string name="halo_tutorial3">浏览任务：横向拖拽</string>
+
+    <!-- Active Display -->
+    <string name="active_display_privacy_content">由于隐私模式已启用，该信息内容没有显示</string>
+    <string name="status_bar_notification_hide_icon_packages">隐藏该应用的通知图标</string>
+
+    <!-- Dialog Cancel/OK -->
+    <string name="cancel">取消</string>
+    <string name="dlg_ok">确定</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+
+    <string name="quick_settings_reminder">提醒</string>
+    <string name="quick_settings_reminder_title">标题：</string>
+    <string name="quick_settings_reminder_message">留言：</string>
+    <string name="quick_settings_reminder_time">提醒时间</string>
+    <string name="quick_settings_reminder_set">设置时间</string>
+    <string name="quick_settings_reminder_update">更新时间</string>
+    <string name="quick_settings_reminder_no_expire">无通知</string>
+    <string name="quick_settings_reminder_dismiss">清除提醒</string>
+    <string name="quick_settings_reminder_dismiss_message">是否清除当前的提醒？</string>
+    <string name="quick_settings_reminder_help_title">触摸</string>
+    <string name="quick_settings_reminder_noti_dismiss">清除</string>
+    <string name="quick_settings_reminder_help_message">触摸上面的空白区域即可设置或更改提醒。长按可清除当前的提醒。</string>
+
+    <!-- On The Go -->
+    <string name="onthego_notif_ticker">On-The-Go已激活</string>
+    <string name="onthego_notif_title">On-The-Go正在使用</string>
+    <string name="onthego_notif_stop">停止</string>
+    <string name="onthego_notif_options">选项</string>
+    <string name="onthego_notif_error">无法启动 On-The-Go</string>
+    <string name="onthego_notif_restart">重启 On-The-Go</string>
+    <string name="onthego_notif_camera_changed">相机模式已更改</string>
+    <string name="onthego_transparency">透明度</string>
+    <string name="onthego_front_camera">使用前置摄像头</string>
+    <string name="onthego_service_toggle">自动重启服务</string>
+
+    <!-- On-The-Go Mode -->
+    <string name="quick_settings_onthego_back">后置摄像头</string>
+    <string name="quick_settings_onthego_front">前置摄像头</string>
+
+    <!-- Powersaver -->
+    <string name="power_saver_notification_title">节能模式正在运行</string>
+    <string name="power_saver_notification_ticker">节能模式正在运行</string>
+    <string name="power_saver_notification_text">正在优化电池的续航时间</string>
+
+    <!-- Title shown in notification popup for launching notification in floating mode -->
+    <string name="status_bar_notification_floating_item_title">悬浮模式</string>
+    <!-- Title shown in recents popup for showing app in floating mode -->
+    <string name="status_bar_recent_floating_item_title">悬浮模式</string>
+
+    <!-- Blacklisted app for floating mode -->
+    <string name="floating_mode_blacklisted_app">当前应用已经添加至黑名单，它将不会以悬浮模式运行</string>
+
+    <!-- First time run hover -->
+    <string name="hover_cling_text">"已启用 Hover\n\n当有新通知时，该通知将以悬浮窗口显示，以便您在不离开当前应用的情况下对其进行操作"</string>
+
+    <!-- Title shown when app provides no interface -->
+    <string name="status_bar_floating_no_interface">无应用程序接口</string>
+
+    <!-- HOVER Tile-->
+    <string name="quick_settings_hover">HOVER</string>
+    <string name="quick_settings_hover_off">关闭HOVER</string>
+
+    <!-- Heads up -->
+    <string name="heads_up_snooze_message">浮动通知在 <xliff:g id="number">%d</xliff:g> 分钟后不再显示</string>
+</resources>
