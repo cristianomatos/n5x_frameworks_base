@@ -22,10 +22,31 @@
     <string name="global_action_onthego">On-The-Go模式</string>
 
     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
+
+    <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permlab_recordScreen">记录所显示内容</string>
     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permdesc_recordScreen">允许应用记录用户屏幕</string>
     <!-- label for screen record item in phone options dialog -->
     <string name="global_action_screen_record">屏幕录像</string>
+
+
+    <!-- status message in phone options dialog for when pie is on -->
+    <string name="global_actions_pie_mode_on_status">SlimPie已启用</string>
+
+    <!-- status message in phone options dialog for when pie is off -->
+    <string name="global_actions_pie_mode_off_status">SlimPie已停用</string>
+
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_pie_navigation_error">由于没有任何一个启用的导航栏，因此你不能停用PIE手势，要停用PIE手势必须先启用导航栏</string>
+
+    <!-- status message in phone options dialog for when navigation bar is on -->
+    <string name="global_actions_nav_bar_mode_on_status">导航栏启用</string>
+
+    <!-- status message in phone options dialog for when navigation bar is off -->
+    <string name="global_actions_nav_bar_mode_off_status">导航栏停用</string>
+
+    <!-- Error message if user want to try to disable all navigation options -->
+    <string name="disable_navigation_pie_error">由于没有任何一个启用的导航栏，因此你不能停用导航栏，要停用导航栏必须先启用PIE手势控制.</string>
 
 </resources>
